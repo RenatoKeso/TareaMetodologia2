@@ -44,13 +44,15 @@ const crearUsuario = (req, res) => {
  * GET /usuarios
  * Obtiene todos los usuarios
  * 
- * TODO: Completa esta función
+ * TODO: Completa esta función LISTO
  */
 const obtenerTodosLosUsuarios = (req, res) => {
   try {
     // Ayudita: 
     // 1. Llama a usuarioService.obtenerTodosLosUsuarios()
     // 2. Responde con sendSuccess(res, usuarios, 'Usuarios obtenidos')
+    const usuarios = usuarioService.obtenerTodosLosUsuarios();
+    return sendSuccess(res, usuarios, 'Usuarios obtenidos');//Devuelve los usuarios obtenidos 
     
   } catch (error) {
     return sendError(res, 'Error al obtener usuarios', 500);
@@ -61,15 +63,14 @@ const obtenerTodosLosUsuarios = (req, res) => {
  * GET /usuarios/:id
  * Obtiene un usuario específico por ID
  * 
- * TODO: Completa esta función
+ * TODO: Completa esta función LISTO
  */
 const obtenerUsuarioPorId = (req, res) => {
   try {
-    // Ayudita:
-    // 1. Obtén el ID de req.params.id
-    // 2. Llama a usuarioService.obtenerUsuarioPorId(id)
-    // 3. Si el usuario NO existe, responde con sendError(res, 'Usuario no encontrado', 404)
-    // 4. Si el usuario EXISTE, responde con sendSuccess(res, usuario, 'Usuario encontrado')
+    const id = req.params.id;
+    const usuario = usuarioService.obtenerUsuarioPorId(id);
+    if (usuario === null) return sendError(res, 'Usuario no encontrado', 404);
+    return sendSuccess(res, usuario, 'Usuario encontrado');
     
   } catch (error) {
     return sendError(res, 'Error al obtener usuario', 500);
@@ -80,16 +81,16 @@ const obtenerUsuarioPorId = (req, res) => {
  * PATCH /usuarios/:id
  * Actualiza un usuario existente
  * 
- * TODO: Completa esta función
+ * TODO: Completa esta función LISTO
  */
 const actualizarUsuario = (req, res) => {
   try {
-    // Ayudita:
-    // 1. Valida req.body con updateUsuarioSchema.validate()
-    // 2. Obtén el ID de req.params.id
-    // 3. Llama a usuarioService.actualizarUsuario(id, value)
-    // 4. Si el usuario NO existe, responde con sendError(res, 'Usuario no encontrado', 404)
-    // 5. Si el usuario EXISTE, responde con sendSuccess(res, usuarioActualizado, 'Usuario actualizado')
+    const { error, value } = updateUsuarioSchema.validate(req.body);
+    if (error) return sendError(res, 'Error en validación de datos', 400, error.details.map(err => err.message));
+    const id  = req.params.id;
+    const usuarioActualizado = usuarioService.actualizarUsuario(id, value);
+    if (usuarioActualizado === null) return sendError(res, 'Usuario no encontrado', 404);
+    return sendSuccess(res, usuarioActualizado, 'Usuario actualizado');
     
   } catch (error) {
     return sendError(res, 'Error al actualizar usuario', 500);
